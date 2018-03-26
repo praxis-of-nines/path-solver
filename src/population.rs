@@ -1,6 +1,6 @@
 extern crate rand;
 use tour::*;
-use city::*;
+use node::*;
 
 pub struct Population {
     tours: Vec<Tour>,
@@ -17,11 +17,11 @@ impl Population {
         }
     }
 
-    pub fn initialize_from_cities(&mut self, rng: &mut rand::ThreadRng, city_list: &Vec<City>) {
+    pub fn initialize_from_cities(&mut self, rng: &mut rand::ThreadRng, node_list: &Vec<Node>) {
         assert_eq!(self.tours.len(), 0);
         for _ in 0..POP_COUNT {
             let mut new_tour = Tour::new();
-            new_tour.generate_individual(rng, &city_list);
+            new_tour.generate_individual(rng, &node_list);
             self.tours.push(new_tour);
         }
         self.initialize_fitness();

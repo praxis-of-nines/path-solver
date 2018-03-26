@@ -1,5 +1,5 @@
 [package]
-name = "TravelingSalesman"
+name = "path_solver"
 version = "0.1.0"
 authors = ["charles"]
 
