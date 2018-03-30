@@ -1,5 +1,6 @@
 extern crate rand;
 extern crate num;
+extern crate chrono;
 
 mod node;
 mod tour;
@@ -9,6 +10,7 @@ mod ga;
 use node::*;
 use population::*;
 use ga::*;
+use chrono::prelude::*;
 
 fn main() {
 
@@ -47,7 +49,7 @@ fn main() {
 
     let rng = &mut rand::thread_rng();
     let mut population = Population::new();
-    population.initialize_from_cities(rng, &node_list);
+    population.initialize_from_nodes(rng, &node_list);
 
     // fittest_tour borrows temporarily from population:
     {
@@ -57,12 +59,17 @@ fn main() {
         println!("starting run-time {:.2}", run_time)
     }
 
+    let start = Utc::now();
+
     for _ in 1..1000 {
         population = GA::evolve_population(rng, population);
     }
 
+    let end = Utc::now();
+
     let fittest_tour = population.get_fittest();
     let run_time = fittest_tour.get_distance() as f64 / 3000.0 + (0.1 * NODE_COUNT as f64);
     println!("ending fittest {}", fittest_tour.get_distance());
-    println!("ending run-time {:.2}", run_time)
+    println!("ending run-time {:.2}", run_time);
+    println!("Time to solve problem {:?} seconds", end.signed_duration_since(start).to_std().unwrap())
 }

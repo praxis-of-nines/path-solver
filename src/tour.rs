@@ -12,6 +12,10 @@ pub struct Tour {
 
 const AMPLIFY_FACTOR: f32 = 2f32;
 
+//! Tour
+//!
+//! Represents a single path (solution) which is a vector of nodes ordered by traversal
+//! 
 impl Tour {
     pub fn new() -> Tour {
         Tour { 
@@ -22,13 +26,23 @@ impl Tour {
         }
     }
 
+    /// Generate the tour based on the nodes.  Copies the node and then shuffles to create a randomly
+    /// generated tour.
+    /// 
+    /// # Examples
+    /// 
+    /// ```
+    /// let mut new_tour = Tour::new();
+    /// new_tour.generate_individual(rng, &node_list);
+    /// ```
     pub fn generate_individual(&mut self, rng: &mut rand::ThreadRng, node_list: &Vec<Node>) {
         assert_eq!(node_list.len(), NODE_COUNT);
 
-        // copy cities in original sequence
+        // copy nodes in original sequence
         for i in 0..NODE_COUNT {
             self.tour[i] = node_list[i];
         }
+
         // shuffle to create new sequence
         for _ in 0..100 {
             for j in 0..NODE_COUNT {
@@ -67,12 +81,15 @@ impl Tour {
 
     pub fn set_fitness(&mut self) {
         let distance: f32 = self.get_distance() as f32;
+        
         assert!(distance > 0.0001);
+
         self.fitness = (1f32 / distance) * 100f32;
     }
 
     pub fn set_relative_fitness(&mut self, total_fitness: f32, average_fitness: f32) {
         assert!(total_fitness > 0.0001);
+
         self.relative_fitness = self.fitness / total_fitness;
         self.amplified_fitness = (self.fitness + ((self.fitness - average_fitness) * AMPLIFY_FACTOR)) / total_fitness;
     }
@@ -80,14 +97,17 @@ impl Tour {
     fn distance_to(&self, from_node: Node, to_node: Node) -> f32 {
         let x_distance: i32 = num::abs(from_node.x - to_node.x);
         let y_distance: i32 = num::abs(from_node.y - to_node.y);
-        // use Pythagorean theorem to calculate distance:
+        
+        // Pythagorean calculation
         let sums_squared: i32 = (x_distance * x_distance) + (y_distance * y_distance);
         let distance: f32 = num::Float::sqrt(sums_squared as f32);
+
         distance
     }
 
     pub fn get_distance(&self) -> i32 {
         let mut tour_distance: i32 = 0;
+        
         for i in 0..NODE_COUNT {
             let from_node = self.tour[i];
             let destination_node =
@@ -101,6 +121,7 @@ impl Tour {
 
             tour_distance += self.distance_to(from_node, destination_node) as i32;
         }
+
         tour_distance
     }
 }

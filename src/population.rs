@@ -9,7 +9,18 @@ pub struct Population {
 
 pub const POP_COUNT: usize = 50;
 
+//! Population
+//!
+//! Maintains a group of solutions (tours) and the functionality related to them.
+//!
 impl Population {
+    /// Create a new empty population
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let mut new_population = Population::new();
+    /// ```
     pub fn new() -> Population {
         Population {
             total_fitness: 0.0,
@@ -17,19 +28,31 @@ impl Population {
         }
     }
 
-    pub fn initialize_from_cities(&mut self, rng: &mut rand::ThreadRng, node_list: &Vec<Node>) {
+    /// Use-once function for initializing a group of tours based on the input node node_list
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let rng = &mut rand::thread_rng();
+    /// let mut population = Population::new();
+    /// population.initialize_from_nodes(rng, &node_list);
+    /// ```
+    pub fn initialize_from_nodes(&mut self, rng: &mut rand::ThreadRng, node_list: &Vec<Node>) {
         assert_eq!(self.tours.len(), 0);
+        
         for _ in 0..POP_COUNT {
             let mut new_tour = Tour::new();
             new_tour.generate_individual(rng, &node_list);
             self.tours.push(new_tour);
         }
+        
         self.initialize_fitness();
     }
 
     pub fn initialize(&mut self, tours: Vec<Tour>) {
         assert_eq!(tours.len(), POP_COUNT);
         assert_eq!(self.tours.len(), 0);
+        
         for tour in tours {
             self.tours.push(tour);
         }
@@ -64,9 +87,22 @@ impl Population {
         max_tour
     }
 
+    /// Returns a psuedo random tour where greater weight is awarded tours with greater fitness. This is
+    /// the method ensuring that over time our population evolves rather than devolves. (TODO: move to GA?)
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let random_value1: f32 = rng.gen::<f32>();
+    /// let random_value2: f32 = rng.gen::<f32>();
+    ///
+    /// let parent1 = pop.get_tour(pop.get_random_tour(random_value1));
+    /// let parent2 = pop.get_tour(pop.get_random_tour(random_value2));
+    /// ```
     pub fn get_random_tour(&self, random_value: f32) -> usize {
         let mut relative_total: f32 = 0.0;
         let mut result: usize = 0;
+
         if self.total_fitness > 0.0 {
             // randomValue is a number between 0 and 1.0
             // relativeTotal increments from 0 to 1.0
@@ -79,6 +115,7 @@ impl Population {
                 }
             }
         }
+
         result
     }
 }

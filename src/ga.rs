@@ -6,16 +6,22 @@ use node::*;
 
 pub struct GA;
 
+// Set higher to increase the amount of new mutations. Lower to weigh more emphasis on the parent coupling
 const MUTATION_RATE: f32 = 0.015;
 
+//! GA 
+//! 
+//! Implementation of the genetic algorithm which evolves the population. A new population entry is found
+//! by first randomly merging 2 tours and then applying a mutation to this child together and then adding
+//! a few mutations to create new genetic material.
 impl GA {
     pub fn evolve_population(rng: &mut rand::ThreadRng, pop: Population) -> Population {
         let mut new_population = Population::new();
         let mut tours = Vec::new();
 
         // Crossover population
-        // Loop over the new population's size and create individuals from
-        // Current population
+        // Loop over the desired population size and create individuals from
+        // current population
         for _ in 0..POP_COUNT {
             let random_value1: f32 = rng.gen::<f32>();
             let random_value2: f32 = rng.gen::<f32>();
@@ -27,6 +33,7 @@ impl GA {
             let child: Tour = GA::crossover(rng, &parent1, &parent2);
             tours.push(child);
         }
+
         new_population.initialize(tours);
 
         // Mutate the new population a bit to add some new genetic material
