@@ -1,3 +1,8 @@
+//! Tour
+//!
+//! Represents a single path (solution) which is a vector of nodes ordered by traversal
+//! 
+
 extern crate rand;
 extern crate num;
 use rand::Rng;
@@ -12,11 +17,14 @@ pub struct Tour {
 
 const AMPLIFY_FACTOR: f32 = 2f32;
 
-//! Tour
-//!
-//! Represents a single path (solution) which is a vector of nodes ordered by traversal
-//! 
 impl Tour {
+    /// Generate a new tour with empty values
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let mut child: Tour = Tour::new();
+    /// ```
     pub fn new() -> Tour {
         Tour { 
             fitness: 0.0,
@@ -59,10 +67,17 @@ impl Tour {
         }
     }
 
+    /// Get all nodes from a tour
+    pub fn get_nodes(&self) -> [Node; NODE_COUNT] {
+        self.tour
+    }
+
+    /// Get a node by index
     pub fn get_node(&self, index: usize) -> Node {
         self.tour[index]
     }
 
+    /// Set a node manually
     pub fn set_node(&mut self, index: usize, node: Node) {
         self.fitness = 0.0;
         self.relative_fitness = 0.0;
@@ -70,6 +85,7 @@ impl Tour {
         self.tour[index] = node;
     }
 
+    /// Find out if a Node exists in tour
     pub fn contains_node(&self, find_node: Node) -> bool {
         for tour in &self.tour {
             if tour.x == find_node.x && tour.y == find_node.y {
@@ -79,6 +95,7 @@ impl Tour {
         false
     }
 
+    /// Set the fitness based on tour distance to goal
     pub fn set_fitness(&mut self) {
         let distance: f32 = self.get_distance() as f32;
         
@@ -87,6 +104,8 @@ impl Tour {
         self.fitness = (1f32 / distance) * 100f32;
     }
 
+    /// Set the fitness based on tour distance and tour distance relative to the total fitness a population
+    /// has found.
     pub fn set_relative_fitness(&mut self, total_fitness: f32, average_fitness: f32) {
         assert!(total_fitness > 0.0001);
 
@@ -94,6 +113,7 @@ impl Tour {
         self.amplified_fitness = (self.fitness + ((self.fitness - average_fitness) * AMPLIFY_FACTOR)) / total_fitness;
     }
 
+    /// Calculate the distance between two Nodes
     fn distance_to(&self, from_node: Node, to_node: Node) -> f32 {
         let x_distance: i32 = num::abs(from_node.x - to_node.x);
         let y_distance: i32 = num::abs(from_node.y - to_node.y);
@@ -105,6 +125,7 @@ impl Tour {
         distance
     }
 
+    /// Calculate the total distance to traverse all nodes in the ordered tour
     pub fn get_distance(&self) -> i32 {
         let mut tour_distance: i32 = 0;
         

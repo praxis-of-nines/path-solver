@@ -1,3 +1,12 @@
+//! Node 
+//! 
+//! A structure to represent a 'stop' on a tour, the primary structure of the program of which must
+//! be traversed.  Should be concurrent ready.
+
+use std::fmt::Debug;
+use std::fmt::Result;
+use std::fmt::Formatter;
+
 #[derive(Copy, Clone)]
 pub struct Node {
     pub x: i32,
@@ -10,6 +19,12 @@ impl Default for Node {
     fn default() -> Node {
         Node { x: -1, y: -1, m: 'n' }
     }
+}
+
+impl Debug for Node {
+	fn fmt(&self, f: &mut Formatter) -> Result {
+      write!(f, "[{:?}, {:?}, {:?}]\n", self.x, self.y, self.m)
+	}
 }
 
 pub const NODE_COUNT: usize = 30;

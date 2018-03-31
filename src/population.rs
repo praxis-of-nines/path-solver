@@ -1,6 +1,12 @@
+//! Population
+//!
+//! Maintains a group of solutions (tours) and the functionality related to them.
+//! Allows the selection of tours based on fittness of tours.
+
 extern crate rand;
 use tour::*;
 use node::*;
+
 
 pub struct Population {
     tours: Vec<Tour>,
@@ -9,10 +15,7 @@ pub struct Population {
 
 pub const POP_COUNT: usize = 50;
 
-//! Population
-//!
-//! Maintains a group of solutions (tours) and the functionality related to them.
-//!
+
 impl Population {
     /// Create a new empty population
     ///
@@ -49,6 +52,7 @@ impl Population {
         self.initialize_fitness();
     }
 
+    /// Initialize a population with a set of tours
     pub fn initialize(&mut self, tours: Vec<Tour>) {
         assert_eq!(tours.len(), POP_COUNT);
         assert_eq!(self.tours.len(), 0);
@@ -58,25 +62,31 @@ impl Population {
         }
     }
 
+    /// Initialize the fitness to default for the set of tours
     pub fn initialize_fitness(&mut self) {
         self.total_fitness = 0.0;
+
         for i in 0..POP_COUNT {
             self.tours[i].set_fitness();
             self.total_fitness += self.tours[i].fitness;
         }
+
         for i in 0..POP_COUNT {
             self.tours[i].set_relative_fitness(self.total_fitness, self.total_fitness / (POP_COUNT as f32));
         }
     }
 
+    /// Return a specific tour reference
     pub fn get_tour(&self, index: usize) -> &Tour {
         &self.tours[index]
     }
 
+    /// Return a specific tour in mutable form
     pub fn get_tour_mut(&mut self, index: usize) -> &mut Tour {
         &mut self.tours[index]
     }
 
+    /// Return the fittest (shortest path) tour 
     pub fn get_fittest(&mut self) -> &Tour {
         let mut max_tour = &self.tours[0];
         for i in 0..POP_COUNT {
@@ -88,7 +98,7 @@ impl Population {
     }
 
     /// Returns a psuedo random tour where greater weight is awarded tours with greater fitness. This is
-    /// the method ensuring that over time our population evolves rather than devolves. (TODO: move to GA?)
+    /// the method ensuring that over time the population evolves rather than devolves.
     ///
     /// # Examples
     ///
@@ -98,6 +108,7 @@ impl Population {
     ///
     /// let parent1 = pop.get_tour(pop.get_random_tour(random_value1));
     /// let parent2 = pop.get_tour(pop.get_random_tour(random_value2));
+    /// ...crossover
     /// ```
     pub fn get_random_tour(&self, random_value: f32) -> usize {
         let mut relative_total: f32 = 0.0;

@@ -69,6 +69,7 @@ fn main() {
 
     let fittest_tour = population.get_fittest();
     let run_time = fittest_tour.get_distance() as f64 / 3000.0 + (0.1 * NODE_COUNT as f64);
+    println!("fittest tour {:?}", fittest_tour.get_nodes());
     println!("ending fittest {}", fittest_tour.get_distance());
     println!("ending run-time {:.2}", run_time);
     println!("Time to solve problem {:?} seconds", end.signed_duration_since(start).to_std().unwrap())
