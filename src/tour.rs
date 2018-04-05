@@ -71,7 +71,7 @@ impl Tour {
     pub fn get_nodes(&self) -> [Node; NODE_COUNT] {
         self.tour
     }
-
+    
     /// Get a node by index
     pub fn get_node(&self, index: usize) -> Node {
         self.tour[index]
@@ -129,7 +129,7 @@ impl Tour {
     pub fn get_distance(&self) -> i32 {
         let mut tour_distance: i32 = 0;
         
-        for i in 0..NODE_COUNT {
+        for i in 0..(NODE_COUNT - 1) {
             let from_node = self.tour[i];
             let destination_node =
                 // check we're not on our tour's last node, if we are set our

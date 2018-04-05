@@ -12,10 +12,10 @@ use node::*;
 
 pub struct GA;
 
-// Set higher to increase the amount of new mutations. Lower to weigh more emphasis on the parent coupling
-const MUTATION_RATE: f32 = 0.015;
-
 impl GA {
+    // Set higher to increase the amount of new mutations. Lower to weigh more emphasis on the parent coupling
+    const MUTATION_RATE: f32 = 0.015;
+
     /// Evolve the population once creating 1 new generation
     ///
     /// # Examples
@@ -30,7 +30,6 @@ impl GA {
         let mut new_population = Population::new();
         let mut tours = Vec::new();
 
-        // Crossover population
         // Loop over the desired population size and create tours crossed-over from
         // strong samples from current population
         for _ in 0..POP_COUNT {
@@ -40,7 +39,6 @@ impl GA {
             let parent1 = pop.get_tour(pop.get_random_tour(random_value1));
             let parent2 = pop.get_tour(pop.get_random_tour(random_value2));
 
-            // Crossover parents
             let child: Tour = GA::crossover(rng, &parent1, &parent2);
             tours.push(child);
         }
@@ -100,7 +98,7 @@ impl GA {
         // Loop through tour cities
         for tour_pos1 in 0..NODE_COUNT {
             // Apply mutation rate
-            if rng.gen::<f32>() < MUTATION_RATE {
+            if rng.gen::<f32>() < GA::MUTATION_RATE {
                 // Get a second random position in the tour
                 let tour_pos2: usize = 0; //random.Next(NodeList.NodeCount);
 

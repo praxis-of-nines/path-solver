@@ -54,21 +54,21 @@ fn main() {
     // fittest_tour borrows temporarily from population:
     {
         let fittest_tour = population.get_fittest();
-        let run_time = fittest_tour.get_distance() as f64 / 3000.0 + (0.1 * NODE_COUNT as f64);
+        let run_time = fittest_tour.get_distance() as f64 / 3000.0 + (0.1 * node_list.len() as f64);
         println!("starting fittest {}", fittest_tour.get_distance());
         println!("starting run-time {:.2}", run_time)
     }
 
     let start = Utc::now();
 
-    for _ in 1..1000 {
+    for _ in 1..2000 {
         population = GA::evolve_population(rng, population);
     }
 
     let end = Utc::now();
 
     let fittest_tour = population.get_fittest();
-    let run_time = fittest_tour.get_distance() as f64 / 3000.0 + (0.1 * NODE_COUNT as f64);
+    let run_time = fittest_tour.get_distance() as f64 / 3000.0 + (0.1 * node_list.len() as f64);
     println!("fittest tour {:?}", fittest_tour.get_nodes());
     println!("ending fittest {}", fittest_tour.get_distance());
     println!("ending run-time {:.2}", run_time);
