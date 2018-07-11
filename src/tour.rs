@@ -9,7 +9,7 @@ use rand::Rng;
 use node::*;
 
 pub struct Tour {
-    tour: [Node; NODE_COUNT],
+    tour: Vec<Node>,
     pub fitness: f32,
     pub relative_fitness: f32,
     pub amplified_fitness: f32,
@@ -25,12 +25,18 @@ impl Tour {
     /// ```
     /// let mut child: Tour = Tour::new();
     /// ```
-    pub fn new() -> Tour {
+    pub fn new(tour_size: usize) -> Tour {
+        let mut v = Vec::new();
+
+        for _ in 0..tour_size {
+            v.push(Node {x: -1, y: -1, m: 'n'})
+        }
+
         Tour { 
             fitness: 0.0,
             relative_fitness: 0.0,
             amplified_fitness: 0.0,
-            tour: [Node::default(); NODE_COUNT],
+            tour: v,
         }
     }
 
@@ -44,17 +50,17 @@ impl Tour {
     /// new_tour.generate_individual(rng, &node_list);
     /// ```
     pub fn generate_individual(&mut self, rng: &mut rand::ThreadRng, node_list: &Vec<Node>) {
-        assert_eq!(node_list.len(), NODE_COUNT);
+        assert_eq!(node_list.len(), self.get_tour_len() as usize);
 
         // copy nodes in original sequence
-        for i in 0..NODE_COUNT {
+        for i in 0..self.get_tour_len() as usize {
             self.tour[i] = node_list[i];
         }
 
         // shuffle to create new sequence
         for _ in 0..100 {
-            for j in 0..NODE_COUNT {
-                let random_index: i32 = rng.gen_range(0, NODE_COUNT as i32);
+            for j in 0..self.get_tour_len() as usize {
+                let random_index: i32 = rng.gen_range(0, self.get_tour_len() as i32);
                 if random_index != j as i32
                 {
                     // swap the node at j with the node at random_index:
@@ -65,11 +71,6 @@ impl Tour {
                 }
             }
         }
-    }
-
-    /// Get all nodes from a tour
-    pub fn get_nodes(&self) -> [Node; NODE_COUNT] {
-        self.tour
     }
     
     /// Get a node by index
@@ -129,12 +130,12 @@ impl Tour {
     pub fn get_distance(&self) -> i32 {
         let mut tour_distance: i32 = 0;
         
-        for i in 0..(NODE_COUNT - 1) {
+        for i in 0..(self.get_tour_len() - 1) {
             let from_node = self.tour[i];
             let destination_node =
                 // check we're not on our tour's last node, if we are set our
                 // tour's final destination node to our starting node
-                if i + 1 < NODE_COUNT {
+                if i + 1 < self.get_tour_len() {
                     self.tour[i + 1]
                 } else {
                     self.tour[0]
@@ -144,5 +145,9 @@ impl Tour {
         }
 
         tour_distance
+    }
+
+    pub fn get_tour_len(&self) -> usize {
+        self.tour.len()
     }
 }

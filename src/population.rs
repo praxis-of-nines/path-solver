@@ -13,7 +13,7 @@ pub struct Population {
     total_fitness: f32,
 }
 
-pub const POP_COUNT: usize = 50;
+pub const POP_COUNT: usize = 100;
 
 
 impl Population {
@@ -44,7 +44,7 @@ impl Population {
         assert_eq!(self.tours.len(), 0);
         
         for _ in 0..POP_COUNT {
-            let mut new_tour = Tour::new();
+            let mut new_tour = Tour::new(node_list.len());
             new_tour.generate_individual(rng, &node_list);
             self.tours.push(new_tour);
         }

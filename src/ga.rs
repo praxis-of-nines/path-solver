@@ -8,12 +8,12 @@ extern crate rand;
 use rand::Rng;
 use population::*;
 use tour::*;
-use node::*;
 
 pub struct GA;
 
 impl GA {
-    // Set higher to increase the amount of new mutations. Lower to weigh more emphasis on the parent coupling
+    // Set higher to increase the amount of new mutations. Lower to weigh more emphasis on the parent coupling.
+    // Recommended was 0.015
     const MUTATION_RATE: f32 = 0.015;
 
     /// Evolve the population once creating 1 new generation
@@ -56,14 +56,14 @@ impl GA {
     }
 
     fn crossover(rng: &mut rand::ThreadRng, parent1: &Tour, parent2: &Tour) -> Tour {
-        let mut child: Tour = Tour::new();
+        let mut child: Tour = Tour::new(parent1.get_tour_len());
 
         // Get start and end sub tour positions for parent1's tour
-        let start_pos: usize = rng.gen_range(0, NODE_COUNT);
-        let end_pos: usize = rng.gen_range(0, NODE_COUNT);
+        let start_pos: usize = rng.gen_range(0, parent1.get_tour_len() as usize);
+        let end_pos: usize = rng.gen_range(0, parent1.get_tour_len() as usize);
 
         // Loop and add the sub tour from parent1 to our child
-        for i in 0..NODE_COUNT {
+        for i in 0..parent1.get_tour_len() as usize {
             // If our start position is less than the end position
             if start_pos < end_pos && i > start_pos && i < end_pos {
                 child.set_node(i, parent1.get_node(i));
@@ -77,11 +77,11 @@ impl GA {
         }
 
         // Loop through parent2's node tour
-        for i in 0..NODE_COUNT {
+        for i in 0..parent1.get_tour_len() as usize {
             // If child doesn't have the node add it
             if !child.contains_node(parent2.get_node(i)) {
                 // Loop to find a spare position in the child's tour
-                for j in 0..NODE_COUNT {
+                for j in 0..parent2.get_tour_len() as usize {
                     // Spare position found, add node
                     if child.get_node(j).x == -1 {
                         child.set_node(j, parent2.get_node(i));
@@ -96,7 +96,7 @@ impl GA {
 
     fn mutate(rng: &mut rand::ThreadRng, tour: &mut Tour) {
         // Loop through tour cities
-        for tour_pos1 in 0..NODE_COUNT {
+        for tour_pos1 in 0..tour.get_tour_len() as usize {
             // Apply mutation rate
             if rng.gen::<f32>() < GA::MUTATION_RATE {
                 // Get a second random position in the tour

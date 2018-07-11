@@ -1,7 +1,7 @@
 //! Node 
 //! 
 //! A structure to represent a 'stop' on a tour, the primary structure of the program of which must
-//! be traversed.  Should be concurrent ready.
+//! be traversed.  Should be concurrent ready (copy, clone).
 
 use std::fmt::Debug;
 use std::fmt::Result;
@@ -26,5 +26,3 @@ impl Debug for Node {
       write!(f, "[{:?}, {:?}, {:?}]\n", self.x, self.y, self.m)
 	}
 }
-
-pub const NODE_COUNT: usize = 30;
