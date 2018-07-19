@@ -12,9 +12,17 @@ use tour::*;
 pub struct GA;
 
 impl GA {
+    // TODO: Move to config
+
     // Set higher to increase the amount of new mutations. Lower to weigh more emphasis on the parent coupling.
     // Recommended was 0.015
     const MUTATION_RATE: f32 = 0.015;
+    // Consider POPULATION_SIZE when setting tournament size.  This is the random sampling size from the population
+    // that will compete for crossover (breeding) rights.  A size of 1 is equivalent to random.  4 means there is no chance
+    // of the 2 least fittest potential parents being chosen (life isn't fair. ask a lobster)
+    const TOURNAMENT_SIZE: usize = 5;
+    // Choices are: roulette (0) / tournament (1) (default)
+    const CROSSOVER_ALGORITHM: usize = 0;
 
     /// Evolve the population once creating 1 new generation
     ///
@@ -33,14 +41,25 @@ impl GA {
         // Loop over the desired population size and create tours crossed-over from
         // strong samples from current population
         for _ in 0..POP_COUNT {
-            let random_value1: f32 = rng.gen::<f32>();
-            let random_value2: f32 = rng.gen::<f32>();
+            if GA::CROSSOVER_ALGORITHM == 0 {
+                let random_value1: f32 = rng.gen::<f32>();
+                let random_value2: f32 = rng.gen::<f32>();
 
-            let parent1 = pop.get_tour(pop.get_random_tour(random_value1));
-            let parent2 = pop.get_tour(pop.get_random_tour(random_value2));
+                let parent1 = pop.get_tour(pop.get_tour_index_roulette(random_value1));
+                let parent2 = pop.get_tour(pop.get_tour_index_roulette(random_value2));
 
-            let child: Tour = GA::crossover(rng, &parent1, &parent2);
-            tours.push(child);
+                let child: Tour = GA::crossover(rng, &parent1, &parent2);
+                tours.push(child);
+            } else {
+                let parent_index1 = pop.get_tour_index_tournament(GA::TOURNAMENT_SIZE);
+                let parent_index2 = pop.get_tour_index_tournament(GA::TOURNAMENT_SIZE);
+
+                let parent1 = pop.get_tour(parent_index1);
+                let parent2 = pop.get_tour(parent_index2);
+
+                let child: Tour = GA::crossover(rng, &parent1, &parent2);
+                tours.push(child);
+            }
         }
 
         new_population.initialize(tours);
@@ -95,7 +114,7 @@ impl GA {
     }
 
     fn mutate(rng: &mut rand::ThreadRng, tour: &mut Tour) {
-        // Loop through tour cities
+        // Loop through tour
         for tour_pos1 in 0..tour.get_tour_len() as usize {
             // Apply mutation rate
             if rng.gen::<f32>() < GA::MUTATION_RATE {

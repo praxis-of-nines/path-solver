@@ -4,8 +4,11 @@
 //! Allows the selection of tours based on fittness of tours.
 
 extern crate rand;
+
 use tour::*;
 use node::*;
+
+use rand::Rng;
 
 
 pub struct Population {
@@ -97,8 +100,23 @@ impl Population {
         max_tour
     }
 
+    /// Get a set of randomly selected indices from the population of tours
+    pub fn get_random_tour_indices(&self, amount: usize) -> Vec<usize> {
+        let mut tour_index:Vec<usize> = Vec::new();
+
+        for _i in 0..amount {
+            let num = rand::thread_rng().gen_range(0, POP_COUNT - 1);
+
+            tour_index.push(num);
+        }
+
+        tour_index
+    }
+
+    /// Roulette Selection
+    ///
     /// Returns a psuedo random tour where greater weight is awarded tours with greater fitness. This is
-    /// the method ensuring that over time the population evolves rather than devolves.
+    /// the method ensuring that over time the population has a greater chance to evolve rather than devolve. 
     ///
     /// # Examples
     ///
@@ -106,11 +124,11 @@ impl Population {
     /// let random_value1: f32 = rng.gen::<f32>();
     /// let random_value2: f32 = rng.gen::<f32>();
     ///
-    /// let parent1 = pop.get_tour(pop.get_random_tour(random_value1));
-    /// let parent2 = pop.get_tour(pop.get_random_tour(random_value2));
+    /// let parent1 = pop.get_tour(pop.get_tour_index_roulette(random_value1));
+    /// let parent2 = pop.get_tour(pop.get_tour_index_roulette(random_value2));
     /// ...crossover
     /// ```
-    pub fn get_random_tour(&self, random_value: f32) -> usize {
+    pub fn get_tour_index_roulette(&self, random_value: f32) -> usize {
         let mut relative_total: f32 = 0.0;
         let mut result: usize = 0;
 
@@ -124,6 +142,37 @@ impl Population {
                 } else {
                     relative_total = relative_total + self.tours[i].amplified_fitness;
                 }
+            }
+        }
+
+        result
+    }
+
+    /// Tournament Selection
+    ///
+    /// Retrieves a random subset of the population and compares there fitness to return the top 2 parents from
+    /// the group.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let parent1 = pop.get_tour_index_tournament(4);
+    /// let parent2 = pop.get_tour_index_tournament(4);
+    /// let tour1 = pop.get_tour(parent1);
+    /// let tour2 = pop.get_tour(parent2);
+    /// ...crossover
+    /// ```
+    pub fn get_tour_index_tournament(&self, tournament_size: usize) -> usize { 
+
+        let tour_index:Vec<usize> = self.get_random_tour_indices(tournament_size);
+
+        let mut result: usize       = 0;
+        let mut result_fitness: f32 = 0.0;
+
+        for i in 0..tour_index.len() {
+            if self.tours[tour_index[i]].fitness > result_fitness {
+                result         = tour_index[i];
+                result_fitness = self.tours[tour_index[i]].fitness;
             }
         }
 

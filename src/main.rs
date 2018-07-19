@@ -28,54 +28,6 @@ fn main() {
         node_list.push(Node { x: coord_pair[0].parse::<i32>().unwrap(), y: coord_pair[1].parse::<i32>().unwrap(), m: 'n' });
     }
 
-    /*node_list.push(Node { x: 604, y: 2009, m: 'n' });
-    node_list.push(Node { x: 180, y: 3004, m: 'n' });
-    node_list.push(Node { x: 800, y: 1080, m: 'n' });
-    node_list.push(Node { x: 140, y: 180, m: 'n' });
-    node_list.push(Node { x: 20, y: 160, m: 'n' });
-    node_list.push(Node { x: 1000, y: 1160, m: 'n' });
-    node_list.push(Node { x: 1200, y: 2160, m: 'n' });
-    node_list.push(Node { x: 1140, y: 140, m: 'n' });
-    node_list.push(Node { x: 40, y: 120, m: 'n' });
-    node_list.push(Node { x: 1000, y: 2125, m: 'n' });
-    node_list.push(Node { x: 180, y: 2890, m: 'n' });
-    node_list.push(Node { x: 60, y: 80, m: 'n' });
-    node_list.push(Node { x: 120, y: 80, m: 'n' });
-    node_list.push(Node { x: 120, y: 600, m: 'n' });
-    node_list.push(Node { x: 290, y: 400, m: 'n' });
-    node_list.push(Node { x: 100, y: 40, m: 'n' });
-    node_list.push(Node { x: 200, y: 2440, m: 'n' });
-    node_list.push(Node { x: 20, y: 20, m: 'n' });
-    node_list.push(Node { x: 60, y: 20, m: 'n' });
-    node_list.push(Node { x: 1200, y: 2090, m: 'n' });
-    node_list.push(Node { x: 1250, y: 2455, m: 'n' });
-    node_list.push(Node { x: 20, y: 280, m: 'n' });
-    node_list.push(Node { x: 3, y: 2090, m: 'n' });
-    node_list.push(Node { x: 300, y: 1240, m: 'n' });
-    node_list.push(Node { x: 200, y: 86, m: 'n' });
-    node_list.push(Node { x: 202, y: 1780, m: 'n' });
-    node_list.push(Node { x: 130, y: 1202, m: 'n' });
-    node_list.push(Node { x: 60, y: 60, m: 'n' });
-    node_list.push(Node { x: 1234, y: 2345, m: 'n' });
-    node_list.push(Node { x: 1, y: 1, m: 'n' });*/
-    /*
-    node_list.push(Node { x: 100,  y: 28,   m: 'n' });
-    node_list.push(Node { x: 672,  y: 72,   m: 'n' });
-    node_list.push(Node { x: 2220, y: 56,   m: 'n' });
-    node_list.push(Node { x: 1096, y: 444,  m: 'n' });
-    node_list.push(Node { x: 1084, y: 864,  m: 'n' });
-    node_list.push(Node { x: 2228, y: 944,  m: 'n' });
-    node_list.push(Node { x: 2528, y: 1052, m: 'n' });
-    node_list.push(Node { x: 2164, y: 1212, m: 'n' });
-    node_list.push(Node { x: 2276, y: 1468, m: 'n' });
-    node_list.push(Node { x: 696,  y: 1544, m: 'n' });
-    node_list.push(Node { x: 1020, y: 1812, m: 'n' });
-    node_list.push(Node { x: 8,    y: 2136, m: 'n' });
-    node_list.push(Node { x: 612,  y: 2084, m: 'n' });
-    node_list.push(Node { x: 732,  y: 2320, m: 'n' });
-    node_list.push(Node { x: 896,  y: 2500, m: 'n' });
-    node_list.push(Node { x: 2668, y: 2608, m: 'n' });*/
-
     let rng = &mut rand::thread_rng();
     let mut population = Population::new();
     population.initialize_from_nodes(rng, &node_list);
@@ -85,7 +37,8 @@ fn main() {
         let fittest_tour = population.get_fittest();
         let run_time = fittest_tour.get_distance() as f64 / 3000.0 + (0.1 * node_list.len() as f64);
         println!("starting fittest {}", fittest_tour.get_distance());
-        println!("starting run-time {:.2}", run_time)
+        println!("starting run-time {:.2}", run_time);
+        println!("amount nodes {}", fittest_tour.get_tour_len())
     }
 
     let start = Utc::now();
